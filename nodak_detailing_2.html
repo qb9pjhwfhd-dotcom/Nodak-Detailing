@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoDak Detailing</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #0f0f0e;
+    --offwhite: #f5f3ee;
+    --accent: #cc2200;
+    --muted: #6b6760;
+    --card-bg: #1a1917;
+    --border: rgba(255,255,255,0.07);
+  }
+  body { background: var(--black); color: var(--offwhite); font-family: 'DM Sans', sans-serif; }
+
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 2rem; border-bottom: 1px solid rgba(204,34,0,0.25); position: sticky; top: 0; background: var(--black); z-index: 100; flex-wrap: wrap; gap: 0.5rem; }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: var(--accent); cursor: pointer; }
+  nav a { color: var(--offwhite); text-decoration: none; font-size: 0.82rem; letter-spacing: 1px; text-transform: uppercase; margin-left: 1.2rem; opacity: 0.7; transition: opacity 0.2s; cursor: pointer; }
+  nav a:hover, nav a.active { opacity: 1; color: var(--accent); }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .btn { display: inline-block; padding: 0.75rem 2.2rem; border: 1px solid var(--accent); color: var(--offwhite); background: var(--accent); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; transition: background 0.2s, color 0.2s; cursor: pointer; }
+  .btn:hover { background: transparent; color: var(--accent); }
+  .btn-ghost { background: transparent; color: var(--accent); margin-left: 1rem; }
+  .btn-ghost:hover { background: var(--accent); color: var(--offwhite); }
+  .btn-dark { background: var(--black); color: var(--offwhite); border-color: var(--black); }
+  .btn-dark:hover { background: #333; color: var(--offwhite); }
+
+  .hero { padding: 5rem 2rem 4rem; text-align: center; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at 50% 0%, rgba(204,34,0,0.1) 0%, transparent 70%); }
+  .hero-eyebrow { font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+  .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.5rem, 10vw, 7rem); line-height: 0.95; letter-spacing: 2px; margin-bottom: 1.5rem; }
+  .hero h1 span { color: var(--accent); }
+  .hero p { max-width: 480px; margin: 0 auto 2rem; line-height: 1.7; color: rgba(245,243,238,0.65); font-size: 1rem; }
+
+  .badge-bar { display: flex; justify-content: center; gap: 2.5rem; padding: 2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .badge { text-align: center; }
+  .badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--accent); line-height: 1; }
+  .badge-label { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  section { padding: 4rem 2rem; max-width: 900px; margin: 0 auto; }
+  .section-tag { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+  h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: 1px; margin-bottom: 1.5rem; }
+
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.07); margin-top: 2rem; }
+  .pricing-col { background: var(--black); }
+  .pricing-col:hover { background: var(--card-bg); transition: background 0.2s; }
+  .col-header { padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .col-vehicle { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 1px; }
+  .col-subtitle { font-size: 0.75rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+  .price-row { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .price-row:last-child { border-bottom: none; }
+  .price-label { font-size: 0.85rem; color: rgba(245,243,238,0.65); }
+  .price-amount { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--accent); letter-spacing: 1px; }
+  .price-row.featured { background: rgba(204,34,0,0.06); }
+  .price-row.featured .price-label { color: var(--offwhite); }
+  .strikethrough { font-size: 0.75rem; color: var(--muted); text-decoration: line-through; margin-left: 6px; font-family: 'DM Sans', sans-serif; vertical-align: middle; }
+
+  .addons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: rgba(255,255,255,0.07); margin-top: 2rem; }
+  .addon-card { background: var(--black); padding: 1.25rem 1.25rem; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+  .addon-card:hover { background: var(--card-bg); }
+  .addon-name { font-size: 0.88rem; color: var(--offwhite); }
+  .addon-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--accent); letter-spacing: 1px; white-space: nowrap; margin-left: 1rem; }
+
+  .why-list { list-style: none; margin-top: 1.5rem; }
+  .why-list li { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border); }
+  .why-list li:last-child { border-bottom: none; }
+  .why-num { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--accent); line-height: 1; min-width: 2rem; }
+  .why-text strong { display: block; font-size: 0.95rem; margin-bottom: 0.2rem; }
+  .why-text span { font-size: 0.85rem; color: rgba(245,243,238,0.55); line-height: 1.6; }
+
+  .stats-row { display: flex; justify-content: center; gap: 4rem; padding: 3rem 2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--accent); line-height: 1; }
+  .stat-label { font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+
+  .reasons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: rgba(255,255,255,0.07); margin-top: 2rem; }
+  .reason-card { background: var(--black); padding: 2rem 1.75rem; transition: background 0.2s; }
+  .reason-card:hover { background: var(--card-bg); }
+  .reason-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .reason-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 1px; color: var(--accent); margin-bottom: 0.5rem; }
+  .reason-desc { font-size: 0.88rem; color: rgba(245,243,238,0.6); line-height: 1.7; }
+
+  .promise-band { background: var(--card-bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 3rem 2rem; text-align: center; }
+  .promise-band h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: 1px; margin-bottom: 1rem; }
+  .promise-band p { max-width: 540px; margin: 0 auto; color: rgba(245,243,238,0.6); line-height: 1.7; font-size: 0.95rem; }
+
+  .hours-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
+  .hours-table tr { border-bottom: 1px solid var(--border); }
+  .hours-table td { padding: 0.6rem 0.25rem; font-size: 0.85rem; }
+  .hours-table td:first-child { color: rgba(245,243,238,0.6); }
+  .hours-open { color: var(--offwhite); font-weight: 500; }
+  .hours-closed { color: var(--muted); }
+
+  .book-hero { padding: 4rem 2rem 3rem; text-align: center; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at 50% 0%, rgba(204,34,0,0.1) 0%, transparent 70%); }
+  .book-hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6rem); line-height: 0.95; letter-spacing: 2px; margin-bottom: 1rem; }
+  .book-hero h1 span { color: var(--accent); }
+  .book-hero p { max-width: 460px; margin: 0 auto; color: rgba(245,243,238,0.65); line-height: 1.7; }
+
+  .book-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.07); max-width: 900px; margin: 3rem auto 4rem; }
+  .book-contact { background: var(--black); padding: 2.5rem 2rem; }
+  .book-contact h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 1px; color: var(--accent); margin-bottom: 1.5rem; }
+  .contact-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border); }
+  .contact-item:last-child { border-bottom: none; }
+  .contact-icon { font-size: 1.4rem; min-width: 2rem; text-align: center; margin-top: 2px; }
+  .contact-label { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .contact-value { font-size: 0.9rem; color: var(--offwhite); line-height: 1.6; }
+  .contact-value a { color: var(--accent); text-decoration: none; }
+  .contact-note { font-size: 0.78rem; color: var(--muted); margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); line-height: 1.6; }
+
+  .book-form { background: var(--card-bg); padding: 2.5rem 2rem; }
+  .book-form h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 1px; color: var(--accent); margin-bottom: 1.5rem; }
+  .form-group { margin-bottom: 1.1rem; }
+  .form-group label { display: block; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; background: var(--black); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--offwhite); font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    padding: 0.65rem 0.85rem; outline: none; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+  .form-group select option { background: #1a1917; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .form-submit { width: 100%; padding: 0.9rem; background: var(--accent); color: var(--offwhite); border: none; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
+  .form-submit:hover { background: #a81c00; }
+  .form-note { font-size: 0.75rem; color: var(--muted); margin-top: 0.75rem; line-height: 1.5; }
+  .form-error { font-size: 0.78rem; color: #ff6b6b; margin-top: 0.5rem; display: none; }
+
+  .cta-band { background: var(--accent); color: var(--offwhite); padding: 3.5rem 2rem; text-align: center; }
+  .cta-band h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: 2px; color: var(--offwhite); margin-bottom: 0.5rem; }
+  .cta-band p { font-size: 0.95rem; margin-bottom: 1.5rem; opacity: 0.85; }
+
+  footer { padding: 2rem; text-align: center; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* GALLERY */
+  .gallery-hero { padding: 4rem 2rem 3rem; text-align: center; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at 50% 0%, rgba(204,34,0,0.1) 0%, transparent 70%); }
+  .gallery-hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6rem); line-height: 0.95; letter-spacing: 2px; margin-bottom: 1rem; }
+  .gallery-hero h1 span { color: var(--accent); }
+  .gallery-hero p { max-width: 460px; margin: 0 auto 2rem; color: rgba(245,243,238,0.65); line-height: 1.7; }
+  .instagram-band { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1.5rem 2rem; background: var(--card-bg); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .instagram-band p { font-size: 0.88rem; color: rgba(245,243,238,0.6); }
+  .btn-insta { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.5rem; background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; transition: opacity 0.2s; }
+  .btn-insta:hover { opacity: 0.85; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; max-width: 900px; margin: 3rem auto; padding: 0 2rem; }
+  .gallery-item { position: relative; aspect-ratio: 1; overflow: hidden; background: var(--card-bg); cursor: pointer; }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; display: block; }
+  .gallery-item:hover img { transform: scale(1.05); }
+  .gallery-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--card-bg); border: 1px dashed rgba(255,255,255,0.1); min-height: 200px; }
+  .gallery-placeholder .ph-icon { font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.3; }
+  .gallery-placeholder .ph-text { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-align: center; padding: 0 1rem; }
+  .gallery-instructions { max-width: 860px; margin: 0 auto 3rem; padding: 1.5rem 2rem; background: var(--card-bg); border-left: 3px solid var(--accent); font-size: 0.82rem; color: rgba(245,243,238,0.55); line-height: 1.8; }
+  .gallery-instructions strong { color: var(--accent); display: block; margin-bottom: 0.5rem; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 999; align-items: center; justify-content: center; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+  .lightbox-close { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 2rem; color: var(--offwhite); cursor: pointer; background: none; border: none; opacity: 0.7; }
+  .lightbox-close:hover { opacity: 1; }
+
+  @media (max-width: 650px) {
+    .pricing-grid { grid-template-columns: 1fr; }
+    .book-layout { grid-template-columns: 1fr; }
+    .stats-row { gap: 2rem; }
+    nav a { margin-left: 0.6rem; font-size: 0.72rem; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo" onclick="showPage('home')">NoDak Detailing</div>
+  <div>
+    <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
+    <a onclick="showPage('pricing')" id="nav-pricing">Pricing</a>
+    <a onclick="showPage('why')" id="nav-why">Why Us</a>
+    <a onclick="showPage('gallery')" id="nav-gallery">Our Work</a>
+    <a onclick="showPage('book')" id="nav-book">Book Now</a>
+  </div>
+</nav>
+
+<!-- ===================== HOME PAGE ===================== -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <p class="hero-eyebrow">Bismarck, North Dakota · We Come to You</p>
+    <h1>Your Car.<br><span>Our Detail.</span><br>Your Driveway.</h1>
+    <p>Professional mobile car detailing at prices that won't clean out your wallet. We bring everything — you don't move an inch.</p>
+    <span class="btn" onclick="showPage('pricing')">See Pricing</span>
+    <span class="btn btn-ghost" onclick="showPage('book')">Book Now</span>
+  </div>
+  <div class="badge-bar">
+    <div class="badge"><div class="badge-num">100%</div><div class="badge-label">Mobile Service</div></div>
+    <div class="badge"><div class="badge-num">BIS</div><div class="badge-label">Bismarck, ND</div></div>
+    <div class="badge"><div class="badge-num">$$</div><div class="badge-label">Best Prices</div></div>
+  </div>
+  <section>
+    <p class="section-tag">What we do</p>
+    <h2>We Bring the Detail to You</h2>
+    <ul class="why-list">
+      <li>
+        <div class="why-num">01</div>
+        <div class="why-text"><strong>Mobile service, zero hassle</strong><span>We show up at your home, office, or anywhere in Bismarck — fully equipped and ready to go.</span></div>
+      </li>
+      <li>
+        <div class="why-num">02</div>
+        <div class="why-text"><strong>Honest, affordable pricing</strong><span>No surprise fees. What you see on our pricing page is what you pay.</span></div>
+      </li>
+      <li>
+        <div class="why-num">03</div>
+        <div class="why-text"><strong>Every vehicle, every size</strong><span>Coupes, sedans, SUVs, trucks — we detail them all with the same care and attention.</span></div>
+      </li>
+    </ul>
+  </section>
+  <div class="cta-band">
+    <h2>Ready for a Clean Ride?</h2>
+    <p>Call or text us to get a free quote and book your detail today.</p>
+    <a href="tel:+13075754326" class="btn btn-dark">📞 (307) 575-4326</a>
+  </div>
+  <footer><p>© 2026 NoDak Detailing · Bismarck, ND · <a href="mailto:nodak.detailing@gmail.com">nodak.detailing@gmail.com</a></p></footer>
+</div>
+
+<!-- ===================== PRICING PAGE ===================== -->
+<div class="page" id="page-pricing">
+  <div class="hero">
+    <p class="hero-eyebrow">Simple, Honest Pricing</p>
+    <h1>No Hidden<br><span>Fees. Ever.</span></h1>
+    <p>Pick your vehicle type and the service you need. Prices are flat — no surprises when we're done.</p>
+  </div>
+  <section>
+    <p class="section-tag">What we offer</p>
+    <h2>Pricing by Vehicle</h2>
+    <div class="pricing-grid">
+      <div class="pricing-col">
+        <div class="col-header"><div class="col-vehicle">Coupe</div><div class="col-subtitle">Cars &amp; small vehicles</div></div>
+        <div class="price-row featured"><span class="price-label">Everything</span><span class="price-amount">$100</span></div>
+        <div class="price-row"><span class="price-label">Exterior</span><span class="price-amount">$40</span></div>
+        <div class="price-row"><span class="price-label">Interior</span><span class="price-amount">$80</span></div>
+      </div>
+      <div class="pricing-col">
+        <div class="col-header"><div class="col-vehicle">Sedan</div><div class="col-subtitle">Mid-size vehicles</div></div>
+        <div class="price-row featured"><span class="price-label">Everything</span><span class="price-amount">$120</span></div>
+        <div class="price-row"><span class="price-label">Exterior</span><span class="price-amount">$40</span></div>
+        <div class="price-row"><span class="price-label">Interior</span><span class="price-amount">$100</span></div>
+      </div>
+      <div class="pricing-col">
+        <div class="col-header"><div class="col-vehicle">SUV / Truck</div><div class="col-subtitle">Large vehicles</div></div>
+        <div class="price-row featured"><span class="price-label">Everything</span><span class="price-amount">$160 <span class="strikethrough">$180</span></span></div>
+        <div class="price-row"><span class="price-label">Exterior</span><span class="price-amount">$80</span></div>
+        <div class="price-row"><span class="price-label">Interior</span><span class="price-amount">$100</span></div>
+      </div>
+    </div>
+    <p style="font-size:0.8rem; color:var(--muted); margin-top:1rem;">* "Everything" includes a full interior + exterior detail.</p>
+  </section>
+  <section style="border-top: 1px solid var(--border);">
+    <p class="section-tag">Customize your detail</p>
+    <h2>Add-On Services</h2>
+    <div class="addons-grid">
+      <div class="addon-card"><span class="addon-name">🪟 Sticker Removal</span><span class="addon-price">$20</span></div>
+      <div class="addon-card"><span class="addon-name">🛋️ Leather Conditioning</span><span class="addon-price">$20</span></div>
+      <div class="addon-card"><span class="addon-name">🐕 Excess Dog Hair Removal</span><span class="addon-price">$20</span></div>
+      <div class="addon-card"><span class="addon-name">🧴 Plastic Shine</span><span class="addon-price">$20</span></div>
+      <div class="addon-card"><span class="addon-name">✨ Car Waxing</span><span class="addon-price">$35</span></div>
+      <div class="addon-card"><span class="addon-name">💨 Odor Elimination</span><span class="addon-price">$25</span></div>
+      <div class="addon-card"><span class="addon-name">💡 Headlight Restoration</span><span class="addon-price">$45</span></div>
+    </div>
+    <p style="font-size:0.8rem; color:var(--muted); margin-top:1rem;">* Add-ons can be combined with any detailing package.</p>
+  </section>
+  <div class="cta-band">
+    <h2>Ready to Book?</h2>
+    <p>Call or text us — we'll get you scheduled fast.</p>
+    <a href="tel:+13075754326" class="btn btn-dark">📞 (307) 575-4326</a>
+  </div>
+  <footer><p>© 2026 NoDak Detailing · Bismarck, ND · <a href="mailto:nodak.detailing@gmail.com">nodak.detailing@gmail.com</a></p></footer>
+</div>
+
+<!-- ===================== WHY US PAGE ===================== -->
+<div class="page" id="page-why">
+  <div class="hero">
+    <p class="hero-eyebrow">Why NoDak Detailing</p>
+    <h1>We Do It<br><span>Right.</span></h1>
+    <p>There are a lot of detailers out there. Here's why Bismarck locals choose NoDak.</p>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Mobile — we come to you</div></div>
+    <div class="stat"><div class="stat-num">$0</div><div class="stat-label">Hidden fees</div></div>
+    <div class="stat"><div class="stat-num">BIS</div><div class="stat-label">Bismarck proud</div></div>
+  </div>
+  <section>
+    <p class="section-tag">The NoDak difference</p>
+    <h2>Six Reasons to Choose Us</h2>
+    <div class="reasons-grid">
+      <div class="reason-card"><div class="reason-icon">🚗</div><div class="reason-title">We Come to You</div><div class="reason-desc">Forget driving across town and waiting around. We show up at your door — home, work, wherever — fully equipped and ready to detail.</div></div>
+      <div class="reason-card"><div class="reason-icon">💵</div><div class="reason-title">Prices That Make Sense</div><div class="reason-desc">We're cheaper than most shops in Bismarck and we don't nickel-and-dime you. Flat rates, no surprises, no upsells you didn't ask for.</div></div>
+      <div class="reason-card"><div class="reason-icon">🧽</div><div class="reason-title">Real Attention to Detail</div><div class="reason-desc">We don't rush. Every job gets our full focus from start to finish — because a half-done detail isn't a detail at all.</div></div>
+      <div class="reason-card"><div class="reason-icon">📍</div><div class="reason-title">Bismarck Local</div><div class="reason-desc">We're from here. We live here. Our reputation in this community matters to us, which means your satisfaction matters to us.</div></div>
+      <div class="reason-card"><div class="reason-icon">🛻</div><div class="reason-title">Any Vehicle, Any Size</div><div class="reason-desc">Coupe, sedan, SUV, or full-size truck — we handle them all. Pricing is clear by vehicle type so you always know what to expect.</div></div>
+      <div class="reason-card"><div class="reason-icon">📞</div><div class="reason-title">Easy to Book</div><div class="reason-desc">No online forms, no waiting on hold. Just call or text us and we'll get you on the schedule — usually within a day or two.</div></div>
+    </div>
+  </section>
+  <div class="promise-band">
+    <h2>Our Promise to You</h2>
+    <p>If you're not happy with the job, tell us. We'll make it right — no questions, no hassle. That's the NoDak guarantee.</p>
+  </div>
+  <div class="cta-band">
+    <h2>See What the Difference Feels Like</h2>
+    <p>Book your detail today — we'll come to you.</p>
+    <a href="tel:+13075754326" class="btn btn-dark">📞 (307) 575-4326</a>
+  </div>
+  <footer><p>© 2026 NoDak Detailing · Bismarck, ND · <a href="mailto:nodak.detailing@gmail.com">nodak.detailing@gmail.com</a></p></footer>
+</div>
+
+<!-- ===================== BOOK NOW PAGE ===================== -->
+<div class="page" id="page-book">
+  <div class="book-hero">
+    <p class="hero-eyebrow">Let's Get You Scheduled</p>
+    <h1>Book Your<br><span>Detail.</span></h1>
+    <p>Fill out the form below and hit Send — it'll open your email app with everything pre-filled and ready to go straight to us.</p>
+  </div>
+
+  <div class="book-layout">
+    <div class="book-contact">
+      <h3>Contact Us Directly</h3>
+      <div class="contact-item">
+        <div class="contact-icon">📞</div>
+        <div>
+          <div class="contact-label">Call or Text</div>
+          <div class="contact-value"><a href="tel:+13075754326">(307) 575-4326</a></div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">✉️</div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-value"><a href="mailto:nodak.detailing@gmail.com">nodak.detailing@gmail.com</a></div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📍</div>
+        <div>
+          <div class="contact-label">Service Area</div>
+          <div class="contact-value">Bismarck, ND &amp; surrounding areas</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">🕐</div>
+        <div>
+          <div class="contact-label">Availability</div>
+          <div class="contact-value">
+            <table class="hours-table">
+              <tr><td>Monday</td><td class="hours-closed">Not Available</td></tr>
+              <tr><td>Tuesday</td><td class="hours-closed">Not Available</td></tr>
+              <tr><td>Wednesday</td><td class="hours-open">5:30 PM – 9:00 PM</td></tr>
+              <tr><td>Thursday</td><td class="hours-closed">Not Available</td></tr>
+              <tr><td>Friday</td><td class="hours-open">5:30 PM – 9:00 PM</td></tr>
+              <tr><td>Saturday</td><td class="hours-open">8:00 AM – 9:00 PM</td></tr>
+              <tr><td>Sunday</td><td class="hours-open">8:00 AM – 9:00 PM</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <p class="contact-note">Prefer to skip the form? Just call or text us directly and we'll get you booked fast.</p>
+    </div>
+
+    <div class="book-form">
+      <h3>Request a Booking</h3>
+      <div class="form-group">
+        <label>Your Name *</label>
+        <input type="text" id="f-name" placeholder="John Smith">
+      </div>
+      <div class="form-group">
+        <label>Phone Number *</label>
+        <input type="tel" id="f-phone" placeholder="(701) 555-0000">
+      </div>
+      <div class="form-group">
+        <label>Vehicle Type *</label>
+        <select id="f-vehicle">
+          <option value="">Select vehicle type...</option>
+          <option>Coupe</option>
+          <option>Sedan</option>
+          <option>SUV / Truck</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Service *</label>
+        <select id="f-service">
+          <option value="">Select a service...</option>
+          <option>Everything (Full Detail)</option>
+          <option>Exterior Only</option>
+          <option>Interior Only</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Add-Ons (optional)</label>
+        <select id="f-addons">
+          <option value="None">None</option>
+          <option>Sticker Removal (+$20)</option>
+          <option>Leather Conditioning (+$20)</option>
+          <option>Excess Dog Hair Removal (+$20)</option>
+          <option>Plastic Shine (+$20)</option>
+          <option>Car Waxing (+$35)</option>
+          <option>Odor Elimination (+$25)</option>
+          <option>Headlight Restoration (+$45)</option>
+          <option>Multiple add-ons (see notes)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Preferred Date &amp; Time *</label>
+        <input type="text" id="f-date" placeholder="e.g. Saturday morning, June 7">
+      </div>
+      <div class="form-group">
+        <label>Your Location / Address *</label>
+        <input type="text" id="f-address" placeholder="Where should we come to you?">
+      </div>
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <textarea id="f-notes" placeholder="Anything we should know about your vehicle?"></textarea>
+      </div>
+      <div class="form-error" id="form-error">Please fill in all required fields before submitting.</div>
+      <button class="form-submit" onclick="submitForm()">Send Booking Request</button>
+      <p class="form-note">Clicking Send will open your email app with all your details pre-filled — just hit send in your email to reach us.</p>
+    </div>
+  </div>
+
+  <footer><p>© 2026 NoDak Detailing · Bismarck, ND · <a href="mailto:nodak.detailing@gmail.com">nodak.detailing@gmail.com</a></p></footer>
+</div>
+
+<!-- ===================== GALLERY PAGE ===================== -->
+<div class="page" id="page-gallery">
+  <div class="gallery-hero">
+    <p class="hero-eyebrow">Before &amp; Afters · Customer Rides</p>
+    <h1>Our<br><span>Work.</span></h1>
+    <p>Every car tells a story. Here's what a NoDak detail looks like.</p>
+    <a href="https://www.instagram.com/nodak.car.detailing" target="_blank" class="btn-insta">📸 Follow us on Instagram</a>
+  </div>
+
+  <div class="instagram-band">
+    <p>See our latest work live →</p>
+    <a href="https://www.instagram.com/nodak.car.detailing" target="_blank" class="btn-insta">@nodak.car.detailing</a>
+  </div>
+
+  <!-- Upload zone — only visible to you when managing the site -->
+  <div style="max-width:900px; margin: 2rem auto 0; padding: 0 2rem;">
+    <div id="upload-zone" style="border: 2px dashed rgba(204,34,0,0.4); background: var(--card-bg); padding: 2.5rem; text-align: center; cursor: pointer; transition: border-color 0.2s;" ondragover="event.preventDefault(); this.style.borderColor='#cc2200';" ondragleave="this.style.borderColor='rgba(204,34,0,0.4)';" ondrop="handleDrop(event);" onclick="document.getElementById('photo-input').click()">
+      <div style="font-size:2.5rem; margin-bottom:0.75rem;">📸</div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:1px; color:var(--accent); margin-bottom:0.4rem;">Add Your Photos</div>
+      <div style="font-size:0.83rem; color:var(--muted);">Click here or drag &amp; drop photos — select as many as you want at once</div>
+      <input type="file" id="photo-input" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files)">
+    </div>
+    <p style="font-size:0.72rem; color:var(--muted); margin-top:0.6rem; text-align:center;">⚠️ Photos are stored in your browser session. They will reload if you reopen the file on the same device, but won't transfer to other devices. For permanent hosting, upload the site to Netlify and use Google Photos or a similar service.</p>
+  </div>
+
+  <!-- Gallery grid — photos appear here -->
+  <div class="gallery-grid" id="gallery-grid" style="margin-top:2rem;">
+    <div id="gallery-empty" style="grid-column: 1/-1; text-align:center; padding: 4rem 2rem; color:var(--muted); font-size:0.88rem;">
+      No photos yet — add some above to get started!
+    </div>
+  </div>
+
+  <div class="cta-band">
+    <h2>Want Results Like These?</h2>
+    <p>Book your detail today — we come to you.</p>
+    <span class="btn btn-dark" onclick="showPage('book')">Book Now</span>
+  </div>
+
+  <footer><p>© 2026 NoDak Detailing · Bismarck, ND · <a href="mailto:nodak.detailing@gmail.com">nodak.detailing@gmail.com</a></p></footer>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="NoDak Detailing">
+</div>
+
+<script>
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('upload-zone').style.borderColor = 'rgba(204,34,0,0.4)';
+    handleFiles(e.dataTransfer.files);
+  }
+
+  function handleFiles(files) {
+    var grid = document.getElementById('gallery-grid');
+    var empty = document.getElementById('gallery-empty');
+    if (empty) empty.remove();
+
+    Array.from(files).forEach(function(file) {
+      if (!file.type.startsWith('image/')) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var src = e.target.result;
+        var item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.innerHTML =
+          '<img src="' + src + '" alt="NoDak Detailing">' +
+          '<button onclick="removePhoto(this)" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:0.85rem;cursor:pointer;display:none;">✕</button>';
+        item.querySelector('img').onclick = function() { openLightbox(src); };
+        item.onmouseenter = function() { item.querySelector('button').style.display = 'block'; };
+        item.onmouseleave = function() { item.querySelector('button').style.display = 'none'; };
+        grid.appendChild(item);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function removePhoto(btn) {
+    var item = btn.parentElement;
+    var grid = document.getElementById('gallery-grid');
+    item.remove();
+    if (grid.children.length === 0) {
+      var empty = document.createElement('div');
+      empty.id = 'gallery-empty';
+      empty.style = 'grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--muted);font-size:0.88rem;';
+      empty.textContent = 'No photos yet — add some above to get started!';
+      grid.appendChild(empty);
+    }
+  }
+
+  function openLightbox(src) {
+    var lb = document.getElementById('lightbox');
+    var img = document.getElementById('lightbox-img');
+    img.src = src;
+    lb.classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.getElementById('lightbox-img').src = '';
+  }
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
+
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('nav a[id]').forEach(function(a) { a.classList.remove('active'); });
+    document.getElementById('page-' + name).classList.add('active');
+    var navEl = document.getElementById('nav-' + name);
+    if (navEl) navEl.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function submitForm() {
+    var name    = document.getElementById('f-name').value.trim();
+    var phone   = document.getElementById('f-phone').value.trim();
+    var vehicle = document.getElementById('f-vehicle').value;
+    var service = document.getElementById('f-service').value;
+    var addons  = document.getElementById('f-addons').value;
+    var date    = document.getElementById('f-date').value.trim();
+    var address = document.getElementById('f-address').value.trim();
+    var notes   = document.getElementById('f-notes').value.trim() || 'None';
+    var errEl   = document.getElementById('form-error');
+
+    if (!name || !phone || !vehicle || !service || !date || !address) {
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+
+    var subject = encodeURIComponent('New Booking Request – NoDak Detailing');
+    var body = encodeURIComponent(
+      'New Booking Request\n' +
+      '===================\n\n' +
+      'Name:     ' + name + '\n' +
+      'Phone:    ' + phone + '\n' +
+      'Vehicle:  ' + vehicle + '\n' +
+      'Service:  ' + service + '\n' +
+      'Add-Ons:  ' + addons + '\n' +
+      'Date:     ' + date + '\n' +
+      'Location: ' + address + '\n' +
+      'Notes:    ' + notes
+    );
+
+    // Open the customer's email app with everything pre-filled
+    window.location.href = 'mailto:nodak.detailing@gmail.com?subject=' + subject + '&body=' + body;
+
+    // Redirect to home page after a short delay
+    setTimeout(function() { showPage('home'); }, 1000);
+  }
+</script>
+
+</body>
+</html>
